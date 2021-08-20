@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./style.css">
+    <script type="text/javascript" charset="UTF-8" src="../libs/three/three.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../libs/three/controls/TrackballControls.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../libs/three/controls/TransformControls.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../libs/util/dat.gui.js"></script>
+    <script>
+	    var vertexShader = `
+    varying vec3 vPos;
+    void main()	{
+      vPos = position;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+    }
+  `;
+	    var fragmentShader = `
+
+    varying vec3 vPos;
+    uniform vec3 size;
+    uniform float thickness;
+    uniform float smoothness;
+
+    void main() {
+
+      float a = smoothstep(thickness, thickness + smoothness, length(abs(vPos.xy) - size.xy));
+      a *= smoothstep(thickness, thickness + smoothness, length(abs(vPos.yz) - size.yz));
+      a *= smoothstep(thickness, thickness + smoothness, length(abs(vPos.xz) - size.xz));
+
+      vec3 c = mix(vec3(1), vec3(0), a);
+
+      gl_FragColor = vec4(c, 1.0);
+    }
+  `;
+    </script>
+
+    <script type="text/javascript" src="../libs/util/Stats.js"></script>
+    <script type="text/javascript" src="./util.js"></script>
+    <script type="text/javascript" src="./normal.js"></script>
+</head>
+<body>
+<div id="viewport"></div>
+
+<script type="text/javascript">
+	(function () {
+        init();
+    })();
+</script>
+</body>
+</html>
